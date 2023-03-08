@@ -40,13 +40,13 @@ Then you should see the examples and be able to include the library in your proj
 
 Here's a minimal example:
 ```
-    if (chat_gpt.simple_message("gpt-3.5-turbo-0301", "user", "Planning a 3-day trip to San Diego", result)) {
-        Serial.println("===OK===");
-        Serial.println(result);
-    } else {
-        Serial.println("===ERROR===");
-        Serial.println(result);
-    }
+if (chat_gpt.simple_message("gpt-3.5-turbo-0301", "user", "Planning a 3-day trip to San Diego", result)) {
+    Serial.println("===OK===");
+    Serial.println(result);
+} else {
+    Serial.println("===ERROR===");
+    Serial.println(result);
+}
 ```
 
 Result
