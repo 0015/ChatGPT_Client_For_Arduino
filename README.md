@@ -16,7 +16,7 @@ https://platform.openai.com/account/api-keys
 ### Using Arduino Library Manager
 
 From Arduino IDE, go to menu *Sketch -> Include Library -> Manage Libraries...*
-In Library Manager Window, search *"ChatGPT"* in the search form then select *"ChatGPT For Arduino*
+In Library Manager Window, search *"ChatGPT"* in the search form then select *"ChatGPT_Client"*
 Click *"Install"* button.
 
 ### Manual installation
