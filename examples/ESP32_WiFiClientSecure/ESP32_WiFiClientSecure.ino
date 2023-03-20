@@ -1,5 +1,5 @@
 /*
- * Project ChatGPT Client For ESP32/ESP8266
+ * Project ChatGPT Client For ESP32
  * Description: For HTTPS connection using WiFiClientSecure
  * Author: Eric Nam
  * Date: 03-08-2023

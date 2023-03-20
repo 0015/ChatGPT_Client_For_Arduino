@@ -9,7 +9,7 @@
 #include <ArduinoBearSSL.h>
 #include <WiFi.h>
 #include <ArduinoJson.h>
-#include "ChatGPT.hpp"
+#include <ChatGPT.hpp>
 
 static const char *ssid = "<WIFI_SSID>";
 static const char *password = "<WIFI_PW>";

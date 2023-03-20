@@ -73,6 +73,9 @@ Overall, San Diego offers a wide range of attractions and activities for all tas
 
 # Updates 
 
+ - v0.1.1
+    - Added ESP8266 Example
+
  - v0.1.0
     - Only Support Chat completion yet
     - Model, only gpt-3.5-turbo and gpt-3.5-turbo-0301 are supported
