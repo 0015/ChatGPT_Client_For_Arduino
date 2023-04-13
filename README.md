@@ -1,3 +1,4 @@
+[![arduino-library-badge](https://www.ardu-badge.com/badge/ChatGPT_Client.svg)](https://www.ardu-badge.com/ChatGPT_Client
 # ChatGPT Client For Arduino
 
 This library helps to use ChatGPT in Arduino environment. There are many features, but currently, only the Create chat completion part is implemented.
@@ -72,6 +73,8 @@ Overall, San Diego offers a wide range of attractions and activities for all tas
 ```
 
 # Updates 
+ - v0.1.2
+    - Demo Bugs Fixed
 
  - v0.1.1
     - Added ESP8266 Example
