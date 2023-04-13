@@ -1,4 +1,4 @@
-[![arduino-library-badge](https://www.ardu-badge.com/badge/ChatGPT_Client.svg)](https://www.ardu-badge.com/ChatGPT_Client
+[![arduino-library-badge](https://www.ardu-badge.com/badge/ChatGPT_Client.svg)](https://www.ardu-badge.com/ChatGPT_Client)
 # ChatGPT Client For Arduino
 
 This library helps to use ChatGPT in Arduino environment. There are many features, but currently, only the Create chat completion part is implemented.
