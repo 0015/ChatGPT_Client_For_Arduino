@@ -1,19 +1,18 @@
 /*
- * Project ChatGPT Client For Arduino
- * Description: For HTTPS connection using ArduinoBearSSL
+ * Project ChatGPT Client For Arduino (Arduino Giga R1, Arduino Portenta H7)
+ * Description: For HTTPS connection using Arduino WiFiSSLClient
  * Author: Eric Nam
  * Date: 05-19-2024
  */
 
-//#define ARDUINO_DISABLE_ECCX08
-#include <ArduinoBearSSL.h>
 #include <WiFi.h>
+#include <WiFiSSLClient.h>
 #include <ArduinoJson.h>
 #include <ChatGPT.hpp>
 #include "Base64ImageData.h"
 
 static const char *ssid = "<WIFI_SSID>";
-static const char *password = "<WIFI_PW>";
+static const char *pass = "<WIFI_PW>";
 int status = WL_IDLE_STATUS;
 
 /*
@@ -23,9 +22,8 @@ int status = WL_IDLE_STATUS;
   timeout: Timeout duration for API requests, in milliseconds.
 */
 
-WiFiClient client;
-BearSSLClient sslClient(client);
-ChatGPT<BearSSLClient> chatGPT_Client(&sslClient, "v1", "<OpenAI_API_KEY>", 60000);
+WiFiSSLClient client;
+ChatGPT<WiFiSSLClient> chatGPT_Client(&client, "v1", "<OpenAI_API_KEY>", 60000);
 
 void exampleTextQuestion() {
   /*
@@ -85,28 +83,32 @@ void exampleVisionQuestionWithURL() {
   }
 }
 
-unsigned long getTime() {
-  return WiFi.getTime();
-}
-
 void setup() {
+  //Initialize serial and wait for port to open:
   Serial.begin(115200);
-  if (WiFi.status() == WL_NO_SHIELD)
-    return;
-
-  int status = WL_IDLE_STATUS;
-  while (status != WL_CONNECTED) {
-    status = WiFi.begin(ssid, password);
-    delay(1000);
+  while (!Serial) {
+    ;  // wait for serial port to connect. Needed for native USB port only
   }
-  Serial.println("Connected!");
 
-  ArduinoBearSSL.onGetTime(getTime);
+  // check for the WiFi module:
+  if (WiFi.status() == WL_NO_MODULE) {
+    Serial.println("Communication with WiFi module failed!");
+    // don't continue
+    while (true)
+      ;
+  }
 
-  // Disable Server Name Indication:
-  // for testing purposes only
-  // DO NOT USE IN PRODUCTION
-  sslClient.setInsecure(BearSSLClient::SNI::Insecure);
+  // attempt to connect to WiFi network:
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+    status = WiFi.begin(ssid, pass);
+
+    // wait 10 seconds for connection:
+    delay(10000);
+  }
+  Serial.println("Connected to WiFi");
 
   Serial.println("[ChatGPT] - Examples");
   delay(1000);
