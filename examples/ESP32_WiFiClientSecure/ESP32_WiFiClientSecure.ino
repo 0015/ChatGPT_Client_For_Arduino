@@ -2,9 +2,10 @@
  * Project ChatGPT Client For ESP32
  * Description: For HTTPS connection using WiFiClientSecure
  * Author: Eric Nam
- * Date: 05-19-2024
+ * Date: 05-28-2024
  */
 
+#include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 #include <ChatGPT.hpp>
