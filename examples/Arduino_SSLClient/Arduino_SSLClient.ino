@@ -2,7 +2,7 @@
  * Project ChatGPT Client For Arduino (Arduino Giga R1, Arduino Portenta H7)
  * Description: For HTTPS connection using Arduino WiFiSSLClient
  * Author: Eric Nam
- * Date: 05-19-2024
+ * Date: 07-17-2024
  */
 
 #include <WiFi.h>
@@ -33,11 +33,12 @@ void exampleTextQuestion() {
   max_tokens: Maximum number of tokens to generate in the response.
   content_only: Flag indicating whether to extract only the content of the response. (e.g., true - answer only, false - full response)
   result: Reference to a String variable to store the result of the API call.
+  mem_dynamic: Select whether to use dynamic memory or static memory when configuring the post body (default: dynamic memory)
   */
 
   String result;
   Serial.println("\n\n[ChatGPT] - Asking a Text Question");
-  if (chatGPT_Client.chat_message("gpt-3.5-turbo", "user", "What is the best feature of GPT-4o?", 100, false, result)) {
+  if (chatGPT_Client.chat_message("gpt-3.5-turbo", "user", "What is the best feature of GPT-4o?", 100, false, result, false)) {
     Serial.print("[ChatGPT] Response: ");
     Serial.println(result);
   } else {
@@ -46,7 +47,7 @@ void exampleTextQuestion() {
   }
 }
 
-void exampleVisionQuestionBaee64() {
+void exampleVisionQuestionBase64() {
   /*
   model: Model to use for generating the response (e.g., "gpt-4o").
   role: Role of the message sender (e.g., "user" or "assistant").
@@ -58,6 +59,7 @@ void exampleVisionQuestionBaee64() {
   max_tokens: Maximum number of tokens to generate in the response.
   content_only: Flag indicating whether to extract only the content of the response. (e.g., true - answer only, false - full response)
   result: Reference to a String variable to store the result of the API call.
+  mem_dynamic: Select whether to use dynamic memory or static memory when configuring the post body (default: dynamic memory)
   */
 
   String result;
@@ -112,9 +114,10 @@ void setup() {
 
   Serial.println("[ChatGPT] - Examples");
   delay(1000);
-  exampleTextQuestion();
+  exampleTextQuestion(); // Post Body in Static Memory
+
   delay(1000);
-  exampleVisionQuestionWithURL();
+  exampleVisionQuestionWithURL(); // Post Body in Dynamic memory
 }
 
 void loop() {}

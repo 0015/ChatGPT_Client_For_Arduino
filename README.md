@@ -1,5 +1,3 @@
-[![arduino-library-badge](https://www.ardu-badge.com/badge/ChatGPT_Client.svg)](https://www.ardu-badge.com/ChatGPT_Client)
-
 ## Overview
 The ChatGPT Arduino Library provides a convenient way to interact with the OpenAI GPT models from Arduino environments, such as ESP32 devices. With this library, you can easily send text and vision queries to the ChatGPT API and receive responses directly in your Arduino projects.
 

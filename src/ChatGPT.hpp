@@ -2,7 +2,7 @@
  * Project ChatGPT Client
  * Description: The official method using API Key for communication with ChatGPT
  * Author: Eric Nam
- * Date: 05-19-2024
+ * Date: 07-17-2024
  */
 
 #ifndef __CHATGPT__
@@ -22,7 +22,6 @@ public:
    * - api_key_in: The API key for authentication.
    * - timeout_in: The timeout duration for requests.
    */
-  ChatGPT() {}
 
   ChatGPT(T *_client,
           const char *api_version_in,
@@ -50,6 +49,7 @@ public:
    * - max_tokens: The maximum number of tokens to generate.
    * - content_only: If true, extracts and returns only the content from the response.
    * - result: Stores the response from the API.
+   * - mem_dynamic: Select Dynamic/Static Memory, (Default: Dyanmic Memory)
    *
    * Returns:
    * - True if the request is successful, false otherwise.
@@ -64,20 +64,46 @@ public:
       const char *detail,
       int max_tokens,
       bool content_only,
-      String &result)
+      String &result,
+      bool mem_dynamic = true)
   {
-    int post_body_size = snprintf(nullptr, 0,
-                                  "{\"model\": \"%s\", \"messages\": [{\"role\": \"%s\", \"content\": [{\"type\": \"%s\", \"text\": \"%s\"}, {\"type\": \"%s\", \"image_url\": {\"url\": \"%s\", \"detail\": \"%s\"}}]}], \"max_tokens\": %d}",
-                                  model, role, type, text, image_type, image_url, detail, max_tokens) +
-                         1;
+    char *post_body = nullptr; // Initialize post_body pointer
+    int post_body_size = 0;
+    if (mem_dynamic)
+    {
+      // Calculate the required size for dynamic allocation
+      post_body_size = snprintf(nullptr, 0,
+                                "{\"model\": \"%s\", \"messages\": [{\"role\": \"%s\", \"content\": [{\"type\": \"%s\", \"text\": \"%s\"}, {\"type\": \"%s\", \"image_url\": {\"url\": \"%s\", \"detail\": \"%s\"}}]}], \"max_tokens\": %d}",
+                                model, role, type, text, image_type, image_url, detail, max_tokens) + 1;
+      post_body = new char[post_body_size];
+      if (post_body == nullptr)
+      {
+        result = "[ERR] Memory allocation failed!";
+        return false;
+      }
+    }
+    else
+    {
+      // Use a static buffer with a fixed size
+      static const int static_buffer_size = 512;
+      char static_post_body[static_buffer_size];
+      post_body_size = static_buffer_size;
+      post_body = static_post_body;
+    }
 
-    char *post_body = new char[post_body_size];
+    // Format the post_body string
     snprintf(post_body, post_body_size,
              "{\"model\": \"%s\", \"messages\": [{\"role\": \"%s\", \"content\": [{\"type\": \"%s\", \"text\": \"%s\"}, {\"type\": \"%s\", \"image_url\": {\"url\": \"%s\", \"detail\": \"%s\"}}]}], \"max_tokens\": %d}",
              model, role, type, text, image_type, image_url, detail, max_tokens);
 
+    // Call the _post function
     bool success = _postStream(post_body, content_only, result);
-    delete[] post_body;
+
+    // Free dynamic memory if allocated
+    if (mem_dynamic)
+    {
+      delete[] post_body;
+    }
     return success;
   }
 
@@ -92,6 +118,7 @@ public:
    * - max_tokens: The maximum number of tokens to generate.
    * - content_only: If true, extracts and returns only the content from the response.
    * - result: Stores the response from the API.
+   * - mem_dynamic: Select Dynamic/Static Memory, (Default: Dyanmic Memory)
    *
    * Returns:
    * - True if the request is successful, false otherwise.
@@ -102,17 +129,43 @@ public:
       const char *content,
       int max_tokens,
       bool content_only,
-      String &result)
+      String &result,
+      bool mem_dynamic = true)
   {
-    int post_body_size = snprintf(nullptr, 0, "{\"model\": \"%s\", \"max_tokens\": %d, \"messages\": [{\"role\": \"%s\", \"content\": \"%s\"}]}", model, max_tokens, role, content) + 1;
-    char *post_body = new char[post_body_size];
+    char *post_body = nullptr; // Initialize post_body pointer
+    int post_body_size = 0;
+
+    if (mem_dynamic)
+    {
+      // Calculate the required size for dynamic allocation
+      post_body_size = snprintf(nullptr, 0, "{\"model\": \"%s\", \"max_tokens\": %d, \"messages\": [{\"role\": \"%s\", \"content\": \"%s\"}]}", model, max_tokens, role, content) + 1;
+      post_body = new char[post_body_size];
+      if (post_body == nullptr)
+      {
+        result = "[ERR] Memory allocation failed!";
+        return false;
+      }
+    }
+    else
+    {
+      // Use a static buffer with a fixed size
+      static const int static_buffer_size = 256;
+      char static_post_body[static_buffer_size];
+      post_body_size = static_buffer_size;
+      post_body = static_post_body;
+    }
 
     // Format the post_body string
     snprintf(post_body, post_body_size, "{\"model\": \"%s\", \"max_tokens\": %d, \"messages\": [{\"role\": \"%s\", \"content\": \"%s\"}]}", model, max_tokens, role, content);
 
     // Call the _post function
     bool success = _postStream(post_body, content_only, result);
-    delete[] post_body;
+
+    // Free dynamic memory if allocated
+    if (mem_dynamic)
+    {
+      delete[] post_body;
+    }
     return success;
   }
 
@@ -148,7 +201,7 @@ private:
       return false;
     }
 
-    int payload_length = strlen(post_body);
+    size_t payload_length = strlen(post_body);
     String auth_header = _get_auth_header(api_key);
     String http_request = "POST /" + api_version + "/chat/completions HTTP/1.1\r\n" + auth_header + "\r\n" + "Host: " + host + "\r\n" + "Cache-control: no-cache\r\n" + "User-Agent: ESP32 ChatGPT\r\n" + "Content-Type: application/json\r\n" + "Content-Length: " + String(payload_length) + "\r\n" + "Connection: close\r\n" + "\r\n";
 
@@ -156,7 +209,7 @@ private:
     client->print(http_request);
 
     // Send the HTTP request body in chunks
-    int bytes_sent = 0;
+    size_t bytes_sent = 0;
     while (bytes_sent < payload_length)
     {
       size_t chunk_size = minimum(payload_length - bytes_sent, static_cast<size_t>(1024)); // Adjust chunk size as needed
